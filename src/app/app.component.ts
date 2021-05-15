@@ -10,6 +10,7 @@ export class AppComponent implements OnInit {
   title = 'd3-tutorial';
 
   ngOnInit() {
+    return;
     const lineChartData = [
       {
         currency: "USD",
@@ -144,8 +145,6 @@ export class AppComponent implements OnInit {
       }))
     }));
 
-    console.log(parsedData);
-
     const xScale = d3.scaleTime()
       .domain([
         d3.min(parsedData, d => d3.min(d.values, (v: any) => v.date)) as any,
@@ -170,7 +169,6 @@ export class AppComponent implements OnInit {
       .enter()
       .append('path')
       .attr('d', d => {
-        console.log(d);
         const lineValues = line(d.values).slice(1);
         const splitedValues = lineValues.split(',');
 
@@ -183,7 +181,6 @@ export class AppComponent implements OnInit {
       .enter()
       .append('path')
       .attr('d', d => {
-        console.log(line(d.values));
         return line(d.values)
       })
       .attr('stroke-width', '2')

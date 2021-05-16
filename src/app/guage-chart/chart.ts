@@ -16,8 +16,16 @@ function gaugeChart() {
         arcScale = d3.scaleLinear(),
         colorOptions: any = ["#d7191c", "#efef5d", "#1a9641"],
         arc = d3.arc();
-    function createGradient(select) {
-        console.log(select)
+
+    var getColor = d3.scaleLinear()
+        .domain([0, 33, 66, 100])
+        // .range(['#6CBE45', '#A9EE89', '#F8B600', '#E01F21'] as any);
+        .range(['#E01F21', '#F8B600', '#A9EE89', '#6CBE45'] as any);
+
+    (window as any).getColor = getColor;
+
+    function createGradient(select, score) {
+        console.log(score)
         const gradient = select
             .select('defs')
             .append('linearGradient')
@@ -30,22 +38,21 @@ function gaugeChart() {
         gradient
             .append('stop')
             .attr('offset', '0%')
-            .attr('style', 'stop-color:#E01F21');
+            .attr('style', 'stop-color:' + getColor(score));
 
-        gradient
-            .append('stop')
-            .attr('offset', '33%')
-            .attr('style', 'stop-color:#F8B600');
-        gradient
-            .append('stop')
-            .attr('offset', '66%')
-            .attr('style', 'stop-color:#A9EE89');
         gradient
             .append('stop')
             .attr('offset', '100%')
-            .attr('style', 'stop-color:#6CBE45;');
+            .attr('style', 'stop-color:' + getColor(0));
+        // gradient
+        //     .append('stop')
+        //     .attr('offset', '66%')
+        //     .attr('style', 'stop-color:#F8B600');
+        // gradient
+        //     .append('stop')
+        //     .attr('offset', '100%')
+        //     .attr('style', 'stop-color:#E01F21;');
     }
-
 
     function chart(selection) {
         selection.each(function (data) {
@@ -95,15 +102,23 @@ function gaugeChart() {
             ]
             arcGEnter.selectAll(".lines").data(ticks).enter()
                 .append("path")
-                .attr("class", "lines");
-            arcGEnter.selectAll(".ticks").data(arcScale.ticks(5))
-                .enter().append("text")
+                .attr("class", (d) => {
+                    return "lines";
+                });
+            arcGEnter.selectAll(".ticks").data(data)
+                .enter().append("circle")
                 .attr("class", "ticks");
+
+            // arcGEnter.append("circle");
+            // arcGEnter.selectAll(".lines").data([{
+            //     score: 70
+            // }]).enter()
+            //     .append("path").attr("class", "lines yyyyyy");
 
             // Update the outer dimensions.
             var svg = selection.select("#chart svg");
             svg.append('defs');
-            svg.call(createGradient);
+            svg.call(createGradient, data[0]);
             svg.attr("width", width).attr("height", height);
             // Update the inner dimensions.
             var g = svg.select("g")
@@ -154,18 +169,27 @@ function gaugeChart() {
                 });
 
             arcG.selectAll(".lines")
-                .attr("d", function (d) { return markerLine([d.score, d.score]); })
+                .attr("d", function (d) {
+                    return markerLine([d.score, d.score]);
+                })
                 .style("fill", "none")
-                .style("stroke-width", 2.5)
+                .style("stroke-width", 2)
                 .style("stroke", "#fff");
-            // arcG.selectAll(".ticks")
-            //     .style("font-size", "12px")
-            //     .style("text-anchor", "middle")
-            //     .attr("x", function (d) { return Math.cos(arcScale(d) + arcMin) * (outerRadius + labelPad); })
-            //     .attr("y", function (d) {
-            //         var yVal = Math.sin(arcScale(d) + arcMin) * (outerRadius + labelPad);
-            //         return yVal < -1 ? yVal : -7;
-            //     }).text(function (d) { return d; });
+            arcG.selectAll(".ticks")
+                // .style("font-size", "12px")
+                // .style("text-anchor", "middle")
+                .attr("r", 10)
+                .attr('fill', 'rgba(255,255,255,1)')
+                .attr('stroke', getColor(data[0]))
+                .style("stroke-width", 2)
+                .attr("cx", function (d) {
+                    console.log(outerRadius)
+                    return Math.cos(arcScale(d) + arcMin) * ((outerRadius - 5) + labelPad);
+                })
+                .attr("cy", function (d) {
+                    var yVal = Math.sin(arcScale(d) + arcMin) * (outerRadius - 5 + labelPad);
+                    return yVal < -1 ? yVal : -7;
+                }).text(function (d) { return d; });
         });
     }
 

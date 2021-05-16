@@ -19,17 +19,18 @@ export class GuageChartComponent implements OnInit {
         gauge.innerRadius(50);
         gauge.outerRadius(80);
 
-        d3.select("#chart").datum([65]).call(gauge);
-
+        d3.select("#chart").datum([Math.floor(Math.random() * 100)]).call(gauge);
         function resize() {
             var gWidth = Math.min((d3.select("#chart").node() as any).offsetWidth, 260);
             gauge.width(gWidth)
-            gauge.innerRadius(gWidth / 4 + 40);
-            gauge.outerRadius((gWidth / 4) + 30);
+            gauge.innerRadius(gWidth / 4 + 55);
+            gauge.outerRadius((gWidth / 4) + 45);
             d3.select("#chart").call(gauge);
         }
-
         resize();
+        // setInterval(() => {
+        //     d3.select("#chart").datum([Math.floor(Math.random() * 100)]).call(gauge);
+        // }, 2000);
         // window.addEventListener("resize", resize);
 
         // var button = document.getElementById("random");

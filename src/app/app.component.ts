@@ -10,7 +10,7 @@ export class AppComponent implements OnInit {
   title = 'd3-tutorial';
 
   ngOnInit() {
-    return;
+    // return;
     const lineChartData = [
       {
         currency: "USD",
@@ -75,7 +75,7 @@ export class AppComponent implements OnInit {
     };
 
     const width = 700 - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+    const height = 500 - margin.top - margin.bottom;
 
     const createGradient = select => {
       const gradient = select
@@ -127,7 +127,7 @@ export class AppComponent implements OnInit {
     const svg = d3.select('#line-chart')
       .append('svg')
       .attr('width', 700 + margin.left + margin.right)
-      .attr('height', 300 + margin.top + margin.bottom)
+      .attr('height', 500 + margin.top + margin.bottom)
       .append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
@@ -157,19 +157,19 @@ export class AppComponent implements OnInit {
         d3.min(parsedData, d => d3.min(d.values, (v: any) => v.close)) as any,
         d3.max(parsedData, d => d3.max(d.values, (v: any) => v.close)) as any
       ])
-      .range([height - 20, 60]);
+      .range([height * 0.65, height * 0.1]);
 
     const line = d3.line()
       .x((d: any) => xScale(d.date))
       .y((d: any) => yScale(d.close))
-      .curve(d3.curveCatmullRom.alpha(0.5));
+      // .curve(d3.curveCatmullRom.alpha(0.5));
 
     svg.selectAll('.line')
       .data(parsedData)
       .enter()
       .append('path')
       .attr('d', d => {
-        const lineValues = line(d.values).slice(1);
+        const lineValues = line(d.values.slice(0,d.values.length - 2)).slice(1);
         const splitedValues = lineValues.split(',');
 
         return `M0,${height},${lineValues},l0,${height - (splitedValues as any)[splitedValues.length - 1]}`

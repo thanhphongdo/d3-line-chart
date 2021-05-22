@@ -10,7 +10,7 @@ export class AppComponent implements OnInit {
   title = 'd3-tutorial';
 
   ngOnInit() {
-    // return;
+    return;
     const lineChartData = [
       {
         currency: "USD",

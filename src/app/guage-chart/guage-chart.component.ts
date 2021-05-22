@@ -19,30 +19,12 @@ export class GuageChartComponent implements OnInit, AfterViewInit {
     }
 
     drawChart() {
-        let self = this;
         var gauge = gaugeChart(this.id);
-        gauge.width(260);
-        gauge.height(200);
-        gauge.innerRadius(50);
-        gauge.outerRadius(80);
-
+        const size = 400;
+        gauge.width(size);
+        gauge.height(size * 0.5 + 5);
+        gauge.innerRadius(size / 2 - 6);
+        gauge.outerRadius(size / 2 - 16);
         d3.select("#" + this.id).datum([this.score]).call(gauge);
-        function resize() {
-            var gWidth = Math.min((d3.select("#" + self.id).node() as any).offsetWidth, 260);
-            gauge.width(gWidth)
-            gauge.innerRadius(gWidth / 4 + 55);
-            gauge.outerRadius((gWidth / 4) + 45);
-            d3.select("#" + self.id).call(gauge);
-        }
-        resize();
-        // setInterval(() => {
-        //     d3.select("#chart").datum([Math.floor(Math.random() * 100)]).call(gauge);
-        // }, 2000);
-        // window.addEventListener("resize", resize);
-
-        // var button = document.getElementById("random");
-        // button.addEventListener("click", function () {
-        //     d3.select("#chart").datum([50]).call(gauge);
-        // });
     }
 }

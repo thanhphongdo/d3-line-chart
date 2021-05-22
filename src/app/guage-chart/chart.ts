@@ -2,9 +2,9 @@ import * as d3 from 'd3';
 (window as any).d3 = d3;
 
 function gaugeChart(chartId: string) {
-    var margin = { top: 0, right: 65, bottom: 10, left: 65 },
-        width = 250,
-        height = 150,
+    var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+        width = 450,
+        height = 450,
         arcMin = -Math.PI / 2,
         arcMax = Math.PI / 2,
         innerRadius = 60,
@@ -19,11 +19,7 @@ function gaugeChart(chartId: string) {
 
     var getColor = d3.scaleLinear()
         .domain([0, 20, 40, 60, 80, 100])
-        // .range(['#6CBE45', '#A9EE89', '#F8B600', '#E01F21'] as any);
-        // .range(['#E01F21', '#F8B600', '#A9EE89', '#6CBE45'] as any);
         .range(['rgb(206,56,46)', 'rgb(223,126,50)', 'rgb(228,191,69)', 'rgb(191,223,115)', 'rgb(160,214,121)', 'rgb(129,188,88)'] as any);
-
-    (window as any).getColor = getColor;
 
     function createGradient(select, score) {
         const gradient = select
@@ -59,14 +55,6 @@ function gaugeChart(chartId: string) {
             .append('stop')
             .attr('offset', '100%')
             .attr('style', 'stop-color:' + getColor(0));
-        // gradient
-        //     .append('stop')
-        //     .attr('offset', '66%')
-        //     .attr('style', 'stop-color:#F8B600');
-        // gradient
-        //     .append('stop')
-        //     .attr('offset', '100%')
-        //     .attr('style', 'stop-color:#E01F21;');
     }
 
     function chart(selection) {
@@ -94,10 +82,6 @@ function gaugeChart(chartId: string) {
                 .each(function (d) { (this as any)._current = d; });
             arcGEnter.append("text").attr("class", "arc-label");
 
-            // var ticks = arcScale.ticks(4).map(function (d) {
-            //     return { score: d };
-            // });
-            // console.log(ticks);
             var ticks = [
                 {
                     score: 0
@@ -124,12 +108,6 @@ function gaugeChart(chartId: string) {
                 .enter().append("circle")
                 .attr("class", "ticks");
 
-            // arcGEnter.append("circle");
-            // arcGEnter.selectAll(".lines").data([{
-            //     score: 70
-            // }]).enter()
-            //     .append("path").attr("class", "lines yyyyyy");
-
             // Update the outer dimensions.
             var svg = selection.select(`#${chartId} svg`);
             svg.append('defs');
@@ -142,7 +120,7 @@ function gaugeChart(chartId: string) {
             var arcG = svg.select("g.arc")
                 .attr("transform", "translate(" +
                     ((width - margin.left - margin.right) / 2) + "," +
-                    ((height * (2 / 3)) + ")"));
+                    (height - 5 + ")"));
 
             svg.select("g.arc .bg-arc")
                 .datum({ endAngle: arcMax })
@@ -162,7 +140,6 @@ function gaugeChart(chartId: string) {
                 .datum({ score: data[0], startAngle: arcMin, endAngle: arcScale(data[0]) })
                 .transition()
                 .duration(0)
-                // .style("fill", function (d) { return colorScale(d.score); })
                 .style('fill', `url(#guage-gradient-${chartId})`)
                 .style("opacity", function (d) { return d.score < dataDomain[0] ? 0 : 1; })
                 .attrTween("d", arcTween);
@@ -191,8 +168,6 @@ function gaugeChart(chartId: string) {
                 .style("stroke-width", 2)
                 .style("stroke", "#fff");
             arcG.selectAll(".ticks")
-                // .style("font-size", "12px")
-                // .style("text-anchor", "middle")
                 .attr("r", 10)
                 .attr('fill', 'rgba(255,255,255,1)')
                 .attr('stroke', getColor(data[0]))
